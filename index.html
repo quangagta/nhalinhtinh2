@@ -2,17 +2,78 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Nhà Thông Minh</title>
-  <link rel="stylesheet" href="style.css">
+  <title>🏠 Nhà Thông Minh</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #6dd5fa, #ffffff);
+      text-align: center;
+      margin: 0;
+      padding: 30px;
+    }
+    h1 { font-size: 2em; color: #333; }
+    .sensor {
+      margin: 40px auto;
+      background: white;
+      width: 320px;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .value {
+      font-size: 24px;
+      margin-top: 10px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      padding: 10px 25px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover { background: #0056b3; }
+  </style>
 </head>
 <body>
   <h1>🏠 Nhà Thông Minh</h1>
-  <div class="menu">
-    <a href="den.html" class="card">💡 Điều khiển đèn</a>
-    <a href="quat.html" class="card">🌀 Điều khiển quạt</a>
-    <a href="cua.html" class="card">🚪 Điều khiển cửa</a>
-    <a href="nhietdo.html" class="card">🌡️ Nhiệt độ & Độ ẩm</a>
+  <div class="sensor">
+    <h2>🌡️ Nhiệt độ & 💧 Độ ẩm (từ Arduino)</h2>
+    <div class="value" id="data">Chưa có dữ liệu...</div>
+    <br>
+    <button id="connect">Kết nối Arduino</button>
   </div>
+
+  <div class="menu">
+    <a href="den.html"><button>💡 Điều khiển đèn</button></a>
+    <a href="quat.html"><button>🌀 Điều khiển quạt</button></a>
+    <a href="cua.html"><button>🚪 Điều khiển cửa</button></a>
+  </div>
+
+  <script>
+    const connectBtn = document.getElementById("connect");
+    const output = document.getElementById("data");
+    let port, reader;
+
+    connectBtn.addEventListener("click", async () => {
+      try {
+        port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 9600 });
+        const decoder = new TextDecoderStream();
+        port.readable.pipeTo(decoder.writable);
+        reader = decoder.readable.getReader();
+
+        output.textContent = "🔌 Đang kết nối...";
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          if (value) output.textContent = "📶 " + value.trim();
+        }
+      } catch (err) {
+        output.textContent = "⚠️ Không thể kết nối: " + err;
+      }
+    });
+  </script>
 </body>
 </html>
-
