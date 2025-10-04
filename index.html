@@ -1,121 +1,125 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>🏠 Nhà Thông Minh</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #89f7fe, #66a6ff);
-      text-align: center;
-      margin: 0;
-      padding: 30px;
-    }
-    h1 {
-      color: #333;
-      margin-bottom: 10px;
-    }
-    .sensor {
-      background: white;
-      width: 300px;
-      margin: 20px auto;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-    .sensor h2 { margin: 5px 0; }
-    .menu {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 15px;
-      max-width: 600px;
-      margin: 40px auto;
-    }
-    .card {
-      background: white;
-      border-radius: 15px;
-      padding: 15px;
-      text-decoration: none;
-      color: #333;
-      font-size: 18px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      transition: 0.2s;
-    }
-    .card:hover {
-      background: #007bff;
-      color: white;
-      transform: scale(1.05);
-    }
-    button {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover { background: #0056b3; }
-    footer {
-      margin-top: 40px;
-      color: #444;
-      font-size: 14px;
-    }
-  </style>
-</head>
+    <meta charset="UTF-8">
+    <title>Nhà Thông Minh Web Serial</title>
+    </head>
 <body>
-  <h1>🏠 Nhà Thông Minh</h1>
-  <div class="sensor">
-    <h2>🌡️ Nhiệt độ: <span id="temp">--</span>°C</h2>
-    <h2>💧 Độ ẩm: <span id="hum">--</span>%</h2>
-    <button id="connect">Kết nối Arduino</button>
-  </div>
+    <h1>🏠 Nhà Thông Minh</h1>
+    
+    <div style="border: 1px solid #ccc; padding: 20px; margin-bottom: 20px;">
+        <p>🌡️ Nhiệt độ: <span id="tempValue">--°C</span></p>
+        <p>💧 Độ ẩm: <span id="humiValue">--%</span></p>
+    </div>
 
-  <div class="menu">
-    <a href="den.html" class="card">💡 Điều khiển đèn</a>
-    <a href="quat.html" class="card">🌀 Điều khiển quạt</a>
-    <a href="cua.html" class="card">🚪 Điều khiển cửa</a>
-    <a href="info.html" class="card">ℹ️ Thông tin hệ thống</a>
-  </div>
+    <button onclick="connectSerial()" id="connectButton">Kết nối Arduino</button>
+    <br><br>
 
-  <footer>
-    ⚙️ Phiên bản 1.0 – Thiết kế bởi bạn 👨‍💻<br>
-    © 2025 Smart Home Project
-  </footer>
+    <button onclick="sendCommand('DEN_TOGGLE')">💡 Điều khiển đèn</button>
+    <div id="systemInfoSection" style="margin-top: 30px; padding: 10px; background: #f0f0f0;">
+        <h2>📋 Thông tin hệ thống</h2>
+        <pre id="infoContent">Đang chờ kết nối và nhận dữ liệu...</pre>
+        <p id="statusMessage" style="color: blue;"></p>
+    </div>
 
-  <script>
-    const connectBtn = document.getElementById("connect");
-    const tempSpan = document.getElementById("temp");
-    const humSpan = document.getElementById("hum");
-    let port, reader;
+    <script>
+        // === CODE JAVASCRIPT BẮT ĐẦU ===
+        let port; 
+        let reader;
+        let receivedData = ''; 
+        const connectButton = document.getElementById('connectButton');
+        const statusDisplay = document.getElementById('statusMessage');
 
-    connectBtn.addEventListener("click", async () => {
-      try {
-        port = await navigator.serial.requestPort();
-        await port.open({ baudRate: 9600 });
-        const decoder = new TextDecoderStream();
-        port.readable.pipeTo(decoder.writable);
-        reader = decoder.readable.getReader();
+        // 1. KẾT NỐI SERIAL
+        async function connectSerial() {
+            if (port) return; 
 
-        connectBtn.textContent = "🔌 Đã kết nối";
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          if (value) {
-            const text = value.trim();
-            // Dữ liệu Arduino gửi: T:xx H:xx
-            const match = text.match(/T:(\d+\.?\d*)\s*H:(\d+\.?\d*)/);
-            if (match) {
-              tempSpan.textContent = match[1];
-              humSpan.textContent = match[2];
+            try {
+                // Yêu cầu và mở cổng Serial
+                port = await navigator.serial.requestPort();
+                await port.open({ baudRate: 9600 });
+                
+                statusDisplay.textContent = "Đã kết nối thành công với Arduino!";
+                connectButton.textContent = "Đã Kết Nối";
+                connectButton.disabled = true;
+
+                readData(); // Bắt đầu đọc dữ liệu
+
+            } catch (error) {
+                console.error("Lỗi khi kết nối Serial:", error);
+                statusDisplay.textContent = "Lỗi kết nối. Vui lòng kiểm tra console.";
             }
-          }
         }
-      } catch (err) {
-        alert("Không thể kết nối Arduino: " + err);
-      }
-    });
-  </script>
+
+        // 2. GỬI LỆNH ĐIỀU KHIỂN
+        async function sendCommand(command) {
+            if (!port || !port.writable) {
+                alert("Chưa kết nối Serial!");
+                return;
+            }
+
+            const writer = port.writable.getWriter();
+            const encoder = new TextEncoder();
+            
+            await writer.write(encoder.encode(command + '\n'));
+            writer.releaseLock();
+            console.log(`Đã gửi lệnh: ${command}`);
+        }
+
+        // 3. ĐỌC VÀ PHÂN TÍCH DỮ LIỆU
+        async function readData() {
+            const textDecoder = new TextDecoderStream();
+            port.readable.pipeTo(textDecoder.writable);
+            reader = textDecoder.readable.getReader();
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) {
+                    reader.releaseLock();
+                    break;
+                }
+
+                receivedData += value;
+                const lines = receivedData.split('\n');
+                receivedData = lines.pop(); // Giữ lại phần chưa hoàn chỉnh
+
+                lines.forEach(line => {
+                    if (line.trim().length > 0) {
+                        processLine(line.trim());
+                    }
+                });
+            }
+        }
+
+        // 4. XỬ LÝ DÒNG DỮ LIỆU ĐẾN
+        function processLine(dataLine) {
+            const parts = dataLine.split(':');
+            const key = parts[0]; 
+            // Lấy phần còn lại làm giá trị, vì chuỗi INFO có nhiều dấu hai chấm
+            const value = parts.slice(1).join(':').trim(); 
+
+            switch (key) {
+                case "TEMP":
+                    document.getElementById('tempValue').textContent = value + ' °C';
+                    break;
+                case "HUMI":
+                    document.getElementById('humiValue').textContent = value + ' %';
+                    break;
+                case "INFO":
+                    // Thay thế " | " bằng ký tự xuống dòng "\n"
+                    const formattedInfo = value.replace(/ \| /g, '\n'); 
+                    document.getElementById('infoContent').textContent = formattedInfo;
+                    break;
+                case "STATUS":
+                    // Hiển thị thông báo phản hồi
+                    statusDisplay.textContent = `Arduino: ${value}`;
+                    break;
+                // Thêm các case khác (CUA, QUAT) tại đây
+            }
+        }
+        // === CODE JAVASCRIPT KẾT THÚC ===
+    </script>
 </body>
 </html>
+
 
