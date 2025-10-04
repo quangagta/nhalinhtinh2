@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>🏠 Nhà Thông Minh</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -18,13 +17,13 @@
     }
     .sensor {
       background: white;
-      width: 320px;
+      width: 300px;
       margin: 20px auto;
       padding: 20px;
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
-    .sensor h2 { margin: 8px 0; }
+    .sensor h2 { margin: 5px 0; }
     .menu {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -62,13 +61,6 @@
       color: #444;
       font-size: 14px;
     }
-    .good { color: green; }
-    .warn { color: orange; }
-    .bad  { color: red; }
-    canvas {
-      margin-top: 40px;
-      max-width: 600px;
-    }
   </style>
 </head>
 <body>
@@ -76,11 +68,8 @@
   <div class="sensor">
     <h2>🌡️ Nhiệt độ: <span id="temp">--</span>°C</h2>
     <h2>💧 Độ ẩm: <span id="hum">--</span>%</h2>
-    <h2>🧯 Khí gas: <span id="gas">--</span></h2>
     <button id="connect">Kết nối Arduino</button>
   </div>
-
-  <canvas id="chart" width="400" height="200"></canvas>
 
   <div class="menu">
     <a href="den.html" class="card">💡 Điều khiển đèn</a>
@@ -98,26 +87,38 @@
     const connectBtn = document.getElementById("connect");
     const tempSpan = document.getElementById("temp");
     const humSpan = document.getElementById("hum");
-    const gasSpan = document.getElementById("gas");
     let port, reader;
 
-    const ctx = document.getElementById('chart').getContext('2d');
-    const chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [
-          {
-            label: 'Nhiệt độ (°C)',
-            data: [],
-            borderColor: 'red',
-            fill: false
-          },
-          {
-            label: 'Độ ẩm (%)',
-            data: [],
-            borderColor: 'blue',
-            fill: false
+    connectBtn.addEventListener("click", async () => {
+      try {
+        port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 9600 });
+        const decoder = new TextDecoderStream();
+        port.readable.pipeTo(decoder.writable);
+        reader = decoder.readable.getReader();
+
+        connectBtn.textContent = "🔌 Đã kết nối";
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          if (value) {
+            const text = value.trim();
+            // Dữ liệu Arduino gửi: T:xx H:xx
+            const match = text.match(/T:(\d+\.?\d*)\s*H:(\d+\.?\d*)/);
+            if (match) {
+              tempSpan.textContent = match[1];
+              humSpan.textContent = match[2];
+            }
+          }
+        }
+      } catch (err) {
+        alert("Không thể kết nối Arduino: " + err);
+      }
+    });
+  </script>
+</body>
+</html>
+
           }
         ]
       },
@@ -191,3 +192,4 @@
   </script>
 </body>
 </html>
+
