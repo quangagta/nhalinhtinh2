@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Nhiệt độ & Độ ẩm</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>🌡️ Nhiệt độ & Độ ẩm</h1>
+
+  <div class="sensor-box">
+    <h2>Nhiệt độ hiện tại: <span id="temp">--</span>°C</h2>
+    <h2>Độ ẩm hiện tại: <span id="hum">--</span>%</h2>
+  </div>
+
+  <button onclick="capNhat()">Cập nhật dữ liệu</button>
+  <br><br>
+  <a href="index.html">⬅ Quay lại trang chủ</a>
+
+  <script>
+    function capNhat() {
+      // Giả lập dữ liệu (sau này sẽ nhận từ Arduino)
+      let temp = (Math.random() * 10 + 25).toFixed(1);
+      let hum = (Math.random() * 20 + 50).toFixed(1);
+      document.getElementById("temp").textContent = temp;
+      document.getElementById("hum").textContent = hum;
+    }
+
+    // Tự cập nhật mỗi 3 giây
+    setInterval(capNhat, 3000);
+  </script>
+</body>
+</html>
