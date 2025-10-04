@@ -19,14 +19,11 @@
 
   <script>
     function capNhat() {
-      // Giả lập dữ liệu (sau này sẽ nhận từ Arduino)
       let temp = (Math.random() * 10 + 25).toFixed(1);
       let hum = (Math.random() * 20 + 50).toFixed(1);
       document.getElementById("temp").textContent = temp;
       document.getElementById("hum").textContent = hum;
     }
-
-    // Tự cập nhật mỗi 3 giây
     setInterval(capNhat, 3000);
   </script>
 </body>
