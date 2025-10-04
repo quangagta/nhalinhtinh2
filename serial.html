@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đọc dữ liệu Arduino qua USB</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    button { padding: 10px 20px; font-size: 16px; }
+    #output { font-size: 24px; margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <h1>🔌 Đọc dữ liệu từ Arduino</h1>
+  <button id="connect">Kết nối Arduino</button>
+  <div id="output">Chưa có dữ liệu...</div>
+
+  <script>
+    const btn = document.getElementById("connect");
+    const out = document.getElementById("output");
+    let port, reader;
+
+    btn.addEventListener("click", async () => {
+      try {
+        port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 9600 });
+        const decoder = new TextDecoderStream();
+        port.readable.pipeTo(decoder.writable);
+        reader = decoder.readable.getReader();
+
+        out.textContent = "Đang đọc dữ liệu...";
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          if (value) out.textContent = "🌡️ Nhiệt độ: " + value.trim() + "°C";
+        }
+      } catch (err) {
+        alert("Không thể kết nối: " + err);
+      }
+    });
+  </script>
+</body>
+</html>
