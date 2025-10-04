@@ -1,13 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Trang web đầu tiên của tôi</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Giao diện Nhà Thông Minh</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Xin chào!</h1>
-  <p>Đây là trang web đầu tiên của mình trên GitHub.</p>
-  <script src="script.js"></script>
-</body>
-</html>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 24 24" aria-hidden><path d="M12 2L3 7v7c0 5 3.5 9 9 9s9-4 9-9V7L12 2z"/></svg>
+      <div>
+        <h1>Nhà Thông Minh</h1>
+        <small id="timeLabel"></small>
+      </div>
+    </div>
+    <nav>
+      <button id="refreshBtn" title="Làm mới">⟳ Reload</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="overview card">
+      <h2>Tổng quan</h2>
+      <div class="overview-grid">
+        <div class="stat">
+          <div class="stat-title">Nhiệt độ</div>
+          <div class="stat-value" id="tempValue">-- °C</div>
+        </div>
+        <div class="stat">
+          <div class="stat-title">Độ ẩm</div>
+          <div class="stat-value" id="humValue">-- %</div>
+        </div>
+        <div class="stat">
+          <div class="stat-title">Cảnh báo</div>
+          <div class="stat-value danger" id="alertValue">Không</div>
+        </div>
+        <div class="stat">
+          <div class="stat-title">Trạng thái cửa</div>
+          <div class="stat-value" id="doorValue">Đóng</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="controls card">
+      <h2>Điều khiển</h2>
+      <div class="controls-grid">
+        <div class="control-box">
+          <h3>Đèn phòng khách</h3>
+          <div class="row">
+            <label class="switch">
+              <input id="lightLiving" type="checkbox">
+              <span class="slider"></span>
+            </label>
+            <span class="small" id="lightLivingLabel">Tắt</span>
+          </div>
+        </div>
+
+        <div class="control-box">
+          <h3>Đèn phòng ngủ</h3>
+          <div class="row">
+            <label class="switch">
+              <input id="lightBedroom" type="checkbox">
+              <span class="slider"></span>
+            </label>
+            <span class="small" id="lightBedroomLabel">Tắt</span>
+          </div>
+        </div>
+
+        <div class="control-box">
+          <h3>Điều hoà</h3>
+          <div class="row">
+            <button class="btn small" id="acDec">-</button>
+            <div style="min-width:80px;text-align:center">
+              <div id="acOnOffLabel">Tắt</div>
+              <div class="ac-temp" id="acTemp">24°C</div>
+            </div>
+            <button class="btn small" id="acInc">+</button>
+          </div>
+          <div class="row" style="margin-top:8px;">
+            <label class="switch">
+              <input id="acPower" type="checkbox">
+              <span class="slider"></span>
+            </label>
+            <span class="small">Bật/Tắt</span>
+          </div>
+        </div>
+
+        <div class="control-box">
+          <h3>Cửa chính</h3>
+          <div class="row">
+            <button class="btn" id="d
