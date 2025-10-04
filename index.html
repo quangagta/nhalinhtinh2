@@ -1,93 +1,54 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Giao diện Nhà Thông Minh</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nhà Thông Minh</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <svg class="logo" viewBox="0 0 24 24" aria-hidden><path d="M12 2L3 7v7c0 5 3.5 9 9 9s9-4 9-9V7L12 2z"/></svg>
-      <div>
-        <h1>Nhà Thông Minh</h1>
-        <small id="timeLabel"></small>
-      </div>
-    </div>
+  <!-- Thanh menu -->
+  <header>
+    <h1>🏠 Nhà Thông Minh</h1>
     <nav>
-      <button id="refreshBtn" title="Làm mới">⟳ Reload</button>
+      <a href="#">Trang chủ</a>
+      <a href="#">Thiết bị</a>
+      <a href="#">Cài đặt</a>
     </nav>
   </header>
 
-  <main class="container">
-    <section class="overview card">
-      <h2>Tổng quan</h2>
-      <div class="overview-grid">
-        <div class="stat">
-          <div class="stat-title">Nhiệt độ</div>
-          <div class="stat-value" id="tempValue">-- °C</div>
-        </div>
-        <div class="stat">
-          <div class="stat-title">Độ ẩm</div>
-          <div class="stat-value" id="humValue">-- %</div>
-        </div>
-        <div class="stat">
-          <div class="stat-title">Cảnh báo</div>
-          <div class="stat-value danger" id="alertValue">Không</div>
-        </div>
-        <div class="stat">
-          <div class="stat-title">Trạng thái cửa</div>
-          <div class="stat-value" id="doorValue">Đóng</div>
-        </div>
+  <!-- Khu vực trạng thái -->
+  <section class="status">
+    <h2>📊 Trạng thái hiện tại</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Nhiệt độ</h3>
+        <p>27°C</p>
       </div>
-    </section>
+      <div class="card">
+        <h3>Độ ẩm</h3>
+        <p>65%</p>
+      </div>
+      <div class="card">
+        <h3>Gas</h3>
+        <p>An toàn ✅</p>
+      </div>
+    </div>
+  </section>
 
-    <section class="controls card">
-      <h2>Điều khiển</h2>
-      <div class="controls-grid">
-        <div class="control-box">
-          <h3>Đèn phòng khách</h3>
-          <div class="row">
-            <label class="switch">
-              <input id="lightLiving" type="checkbox">
-              <span class="slider"></span>
-            </label>
-            <span class="small" id="lightLivingLabel">Tắt</span>
-          </div>
-        </div>
+  <!-- Khu vực điều khiển -->
+  <section class="control">
+    <h2>🎛 Điều khiển thiết bị</h2>
+    <div class="buttons">
+      <button>Bật đèn</button>
+      <button>Tắt đèn</button>
+      <button>Bật quạt</button>
+      <button>Tắt quạt</button>
+    </div>
+  </section>
 
-        <div class="control-box">
-          <h3>Đèn phòng ngủ</h3>
-          <div class="row">
-            <label class="switch">
-              <input id="lightBedroom" type="checkbox">
-              <span class="slider"></span>
-            </label>
-            <span class="small" id="lightBedroomLabel">Tắt</span>
-          </div>
-        </div>
-
-        <div class="control-box">
-          <h3>Điều hoà</h3>
-          <div class="row">
-            <button class="btn small" id="acDec">-</button>
-            <div style="min-width:80px;text-align:center">
-              <div id="acOnOffLabel">Tắt</div>
-              <div class="ac-temp" id="acTemp">24°C</div>
-            </div>
-            <button class="btn small" id="acInc">+</button>
-          </div>
-          <div class="row" style="margin-top:8px;">
-            <label class="switch">
-              <input id="acPower" type="checkbox">
-              <span class="slider"></span>
-            </label>
-            <span class="small">Bật/Tắt</span>
-          </div>
-        </div>
-
-        <div class="control-box">
-          <h3>Cửa chính</h3>
-          <div class="row">
-            <button class="btn" id="d
+  <footer>
+    <p>© 2025 Nhà thông minh STEM</p>
+  </footer>
+</body>
+</html>
