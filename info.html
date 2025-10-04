@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>ℹ️ Thông tin hệ thống</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #f6d365, #fda085);
+      text-align: center;
+      margin: 0;
+      padding: 30px;
+      color: #333;
+    }
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    .info-box {
+      background: white;
+      border-radius: 20px;
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      text-align: left;
+      line-height: 1.8em;
+    }
+    .info-box strong { color: #007bff; }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>ℹ️ Thông tin hệ thống</h1>
+
+  <div class="info-box">
+    <p><strong>Tên dự án:</strong> Nhà Thông Minh Arduino</p>
+    <p><strong>Phiên bản:</strong> 1.0</p>
+    <p><strong>Trạng thái kết nối:</strong> <span id="status">Chưa kết nối</span></p>
+    <p><strong>Nhiệt độ hiện tại:</strong> <span id="temp">--</span>°C</p>
+    <p><strong>Độ ẩm hiện tại:</strong> <span id="hum">--</span>%</p>
+    <p><strong>Thời gian hệ thống:</strong> <span id="time"></span></p>
+  </div>
+
+  <button onclick="location.href='index.html'">⬅️ Quay về Trang chủ</button>
+
+  <script>
+    // Cập nhật thời gian liên tục
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById("time").textContent = now.toLocaleString("vi-VN");
+    }, 1000);
+
+    // Nếu đã lưu dữ liệu từ trang chủ (Web Serial)
+    if (localStorage.getItem("temp")) {
+      document.getElementById("status").textContent = "Đã kết nối";
+      document.getElementById("temp").textContent = localStorage.getItem("temp");
+      document.getElementById("hum").textContent = localStorage.getItem("hum");
+    } else {
+      document.getElementById("status").textContent = "Chưa kết nối Arduino";
+    }
+  </script>
+</body>
+</html>
